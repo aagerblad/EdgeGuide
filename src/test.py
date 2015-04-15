@@ -1,10 +1,10 @@
 import ibm
 
 r = ibm.post_activity(
-	{
-		"title": "Test apa title",
+    {
+        "title": "Test apa title",
         "content":"this is content",
-	}
+    }
 )
 
 

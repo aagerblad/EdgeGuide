@@ -28,8 +28,15 @@ def post_activity(params):
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
     }
 
+    # r = requests.post(
+    #     'http://apps.ce.collabserv.com/connections/opensocial/rest/activitystreams/@me/@all', 
+    #     data=json.dumps(activity),
+    #     auth=HTTPBasicAuth('puaberg@yahoo.se', 'edge.guide'),
+    #     headers=headers
+    # )
+
     r = requests.post(
-        'http://apps.ce.collabserv.com/connections/opensocial/rest/activitystreams/@me/@all', 
+        'http://192.168.43.139:8888', 
         data=json.dumps(activity),
         auth=HTTPBasicAuth('puaberg@yahoo.se', 'edge.guide'),
         headers=headers
