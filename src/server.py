@@ -26,12 +26,18 @@ lastchecked = datetime.now()
 while True:
 	s = lastchecked.strftime("%Y%m%d%H%M%S")
 	lastchecked = datetime.now()
+
+
 	deals = high.get_deals_since(s)
 	if deals != False:
 		for deal in deals:
 			print(deal.name)
-	else:
-		print("Inget nytt")
+
+	companies = high.get_companies_since(s)
+	if companies != False:
+		for company in companies:
+			print(company.name)
 
 	time.sleep(5)
 	pass
+
