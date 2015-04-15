@@ -11,23 +11,24 @@ ALREADY_POSTED = {
 }
 
 def threaded_post(payload):
-
-    r = ibm.post_activity(payload)
+	pass
+    # r = ibm.post_activity(payload)
+    # print 'Got request with status code:', r.status_code
 
     # TODO this is temp
-    print 'Got request with status code:', r.status_code
     # import json
     # print json.dumps(json.loads(r.text), sort_keys=True, indent=4, separators=(',', ': '))
 
 
-def post(title, content):
+def post(title, content, url):
     print 'Trying to post with title:', title
 
     t = threading.Thread(
         target=threaded_post,
         args=({
             "title": title,
-            "content": content
+            "content": content,
+            "gif": url
         }, )
     )
     t.daemon = True
@@ -35,32 +36,45 @@ def post(title, content):
 
 def post_daily_task():
     # TODO get from highrise
-    post('Daily tasks', '<none>')
+    post('Daily tasks', '<none>', '')
 
 
 def post_deal(deal):
 
-    if deal.id in ALREADY_POSTED['deals'] and ALREADY_POSTED['deals'][deal.id] == deal.updated_at:
+    if deal.highrise_id in ALREADY_POSTED['deals'] and ALREADY_POSTED['deals'][deal.highrise_id] == deal.updated_at:
         return
-    ALREADY_POSTED['deals'][deal.id] = deal.updated_at
+    ALREADY_POSTED['deals'][deal.highrise_id] = deal.updated_at
 
     if deal.created_at != deal.updated_at:
-        title = 'Updated deal: %s' % deal.name 
-        content = '<updated deal content>'
+    	if deal.status == "won":
+    		title = 'Won deal: %s' % deal.name 
+        	content = deal.background
+        	gif = 'http://i.giphy.com/YFIn0ICJFwGNa.gif'	
+    	elif deal.status == "lost":
+    		title = 'Lost deal: %s' % deal.name 
+        	content = deal.background
+        	gif = 'http://i.giphy.com/8boMf1VXVHoJy.gif'
+        else:
+        	title = 'Updated deal: %s' % deal.name 
+        	content = deal.background
+        	gif = ''
     else:
         title = 'New deal created: %s' % deal.name
-        content = '<nde deal content>'
-    post(title, content)
+        content = deal.background
+        gif = ''
+    post(title, content, gif)
 
 
 def post_company(deal):
     if True:
         title = 'Company cond 1'
         content = '<company conent 1>'
+        gif = ''
     else:
         title = 'Company cond 2'
         content = '<company content 2>'
-    post(title, content)
+        gif = ''
+    post(title, content, gif)
 
 # Initialize it
 high = Highton(
@@ -78,7 +92,7 @@ while True:
     s = (lastchecked - timedelta(hours=2)).strftime("%Y%m%d%H%M%S")
     lastchecked = datetime.now()
 
-    print lastchecked'Getting deals since %s...')
+    
     deals = high.get_deals_since(s)
     for deal in (deals or []):
         post_deal(deal)
